@@ -1,0 +1,11 @@
+server.name: kibana
+server.host: 0.0.0.0
+server.ssl.enabled: false
+server.publicBaseUrl: ${KIBANA_PUBLIC_URL}
+server.securityResponseHeaders.strictTransportSecurity: null
+elasticsearch.hosts: [ http://elasticsearch:9200 ]
+monitoring.ui.container.elasticsearch.enabled: true
+elasticsearch.username: ${ELASTICSEARCH_USERNAME}
+elasticsearch.password: ${ELASTICSEARCH_PASSWORD}
+xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+

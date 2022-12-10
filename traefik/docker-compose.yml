@@ -1,0 +1,44 @@
+version: '3'
+services:
+  traefik:
+    image: traefik
+    container_name: "traefik"
+    restart: always
+    command:
+#      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST}`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      # Allow whitelisted IPs only
+      - "traefik.http.middlewares.homeonly.ipwhitelist.sourcerange=${TRAEFIK_IP_WHITELIST}"
+      - "traefik.http.routers.traefik.middlewares=dashboardauth,homeonly@docker"
+      # Dashboard Auth
+      - "traefik.http.middlewares.dashboardauth.basicauth.users=admin:${TRAEFIK_ADMIN_PASSWORD}"
+      # HTTPS redirect
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certs:/certs
+    networks:
+      - traefik-public
+networks:
+  traefik-public:
+    name: traefik-public

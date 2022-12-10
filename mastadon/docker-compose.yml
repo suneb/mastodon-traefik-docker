@@ -1,0 +1,108 @@
+version: '3'
+services:
+  db:
+    restart: always
+    image: 'postgres:9.6-alpine'
+    shm_size: 256mb
+    networks:
+      - internal_network
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-U'
+        - postgres
+    volumes:
+      - './postgres:/var/lib/postgresql/data'
+    environment:
+      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
+  redis:
+    restart: always
+    image: 'redis:6.0-alpine'
+    networks:
+      - internal_network
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+    volumes:
+      - './redis:/data'
+  web:
+    image: tootsuite/mastodon
+    restart: always
+    env_file: .env.production
+    command: 'bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"'
+    networks:
+      - external_network
+      - internal_network
+      - traefik-public
+      - elastic-net
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'wget -q --spider --proxy=off localhost:3000/health || exit 1'
+    ports:
+      - '3000:3000'
+    user: 991:991
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - './public/system:/mastodon/public/system'
+    labels:
+      - traefik.enable=true
+      - 'traefik.docker.network=traefik-public'
+      - 'traefik.http.services.${COMPOSE_PROJECT_NAME}-web.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${DOMAIN}`)'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=websecure'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls.certresolver=letsencrypt'
+  streaming:
+    image: tootsuite/mastodon
+    restart: always
+    env_file: .env.production
+    command: 'node ./streaming'
+    networks:
+      - external_network
+      - internal_network
+      - traefik-public
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1'
+    ports:
+      - '127.0.0.1:4000:4000'
+    user: 991:991
+    depends_on:
+      - db
+      - redis
+    labels:
+      - traefik.enable=true
+      - 'traefik.docker.network=traefik-public'
+      - 'traefik.http.services.${COMPOSE_PROJECT_NAME}-streaming.loadbalancer.server.port=4000'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api/v1/streaming`))'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.entrypoints=websecure'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.tls.certresolver=letsencrypt'
+  sidekiq:
+    image: tootsuite/mastodon
+    restart: always
+    env_file: .env.production
+    command: 'bundle exec sidekiq'
+    depends_on:
+      - db
+      - redis
+    networks:
+      - external_network
+      - internal_network
+      - elastic-net
+    volumes:
+      - './public/system:/mastodon/public/system'
+networks:
+  external_network: null
+  internal_network:
+    internal: true
+  traefik-public:
+    external: true
+#    name: traefik-public
+  elastic-net:
+    external: true
