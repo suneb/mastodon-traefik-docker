@@ -54,7 +54,7 @@ services:
       - traefik.enable=true
       - 'traefik.docker.network=traefik-public'
       - 'traefik.http.services.${COMPOSE_PROJECT_NAME}-web.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${TRAEFIK_MASTADON_DOMAIN}`)'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${TRAEFIK_MASTODON_DOMAIN}`)'
       - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=websecure'
       - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls.certresolver=letsencrypt'
   streaming:
@@ -80,7 +80,7 @@ services:
       - traefik.enable=true
       - 'traefik.docker.network=traefik-public'
       - 'traefik.http.services.${COMPOSE_PROJECT_NAME}-streaming.loadbalancer.server.port=4000'
-      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.rule=(Host(`${TRAEFIK_MASTADON_DOMAIN}`) && PathPrefix(`/api/v1/streaming`))'
+      - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.rule=(Host(`${TRAEFIK_MASTODON_DOMAIN}`) && PathPrefix(`/api/v1/streaming`))'
       - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.entrypoints=websecure'
       - 'traefik.http.routers.${COMPOSE_PROJECT_NAME}-streaming.tls.certresolver=letsencrypt'
   sidekiq:

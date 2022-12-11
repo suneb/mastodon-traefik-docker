@@ -1,6 +1,6 @@
-# Mastodon with Traefik and ElasticSearch
+# Docker Compose: Mastodon with Traefik and ElasticSearch
 
-Notes on setting up a Mastodon instance on an Ubuntu server using Docker. End goal was to have:
+Notes on setting up a Mastodon instance on an Ubuntu server using Docker Compose. End goal was to have:
 * Mastodon running on custom domain
 * Traefik for https and LetsEncrypt for automatic certificates
 * Optional ElasticSearch for search
@@ -13,7 +13,7 @@ Notes on setting up a Mastodon instance on an Ubuntu server using Docker. End go
 * Credentials for an outgoing e-mail service, such as SendGrid or MailJet
 * Clone of this repository
 
-We're running all commands shown below as `root`
+Please note: Running all commands shown below as `root`
 
 ## DNS
 Setup for domain name with the following A-records:
@@ -79,7 +79,7 @@ Adjust the settings in `.env`:
 ```
 COMPOSE_PROJECT_NAME=mastodon
 POSTGRES_PASSWORD=(make a secure password for database)
-TRAEFIK_mastodon_DOMAIN=my.domain (change to your domain)
+TRAEFIK_MASTODON_DOMAIN=my.domain (change to your domain)
 ```
 Save and quit the editor.
 
