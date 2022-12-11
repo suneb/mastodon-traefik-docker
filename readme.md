@@ -87,7 +87,7 @@ Save and quit the editor.
 
 Okay, let's setup mastodon itself:
 ```
-docker-compose run --rm -v $(pwd)/.env.production:/opt/mastodon/.env.production web bundle exec rake mastodon:setup
+docker compose run --rm -v $(pwd)/.env.production:/opt/mastodon/.env.production web bundle exec rake mastodon:setup
 ```
 This command will start an interactive setup guide:
 ```
