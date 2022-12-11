@@ -139,6 +139,21 @@ You can review the settings by opening `.env.production` with nano. Hopefully we
 ```
 docker compose up -d && docker compose logs -f
 ```
+At some point `mastodon-web-1` wil log that it's listening on `http://0.0.0.0:3000`.
+
+Just need to create an admin user. You can do this in the command line by accessing the container and using Matodons cli:
+```
+docker compose exec -ti web /bin/bash
+
+# Inside the container:
+bin/tootctl accounts create \
+  admin \
+  --email admin@my.domain \
+  --confirmed \
+  --role Owner
+```
+Mastodon will print out your temporary password.
+
 You can check if everything is running by going to `https://my.domain/`. If it doesn't, there's a few ways to debug:
 * Run `curl -v http://localhost:3000/health` and see if it returns HTTP 200 OK. If it does, the problem is probably with the connection to Traefik.
   * If not, check the docker logs with `docker compose logs -f`
