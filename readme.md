@@ -125,6 +125,15 @@ Send a test e-mail with this configuration right now? No
 
 This configuration will be written to .env.production
 Save configuration? Yes
+
+Prepare the database now? Yes
+Running `RAILS_ENV=production rails db:setup` ...
+
+Database 'postgres' already exists
+Done!
+
+All done! You can now power on the Mastodon server 🐘
+Do you want to create an admin user straight away? No
 ```
 You can review the settings by opening `.env.production` with nano. Hopefully we're all set, let's start docker:
 ```
