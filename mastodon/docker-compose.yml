@@ -37,7 +37,7 @@ services:
       - external_network
       - internal_network
       - traefik-public
-      - elastic-net
+#      - elastic-net
     healthcheck:
       test:
         - CMD-SHELL
@@ -94,7 +94,7 @@ services:
     networks:
       - external_network
       - internal_network
-      - elastic-net
+#      - elastic-net
     volumes:
       - './public/system:/mastodon/public/system'
 networks:
@@ -103,5 +103,5 @@ networks:
     internal: true
   traefik-public:
     external: true
-  elastic-net:
-    external: true
+#  elastic-net:
+#    external: true
