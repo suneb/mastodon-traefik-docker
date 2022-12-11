@@ -8,11 +8,18 @@ services:
       - ./data:/usr/share/elasticsearch/data
     environment:
       - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+      - "thread_pool.write.queue_size=1000"
     user: 1000:1000
     networks:
       - elastic-net
     ports:
       - 9200:9200  
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3072M
     healthcheck:
       test:
         - CMD-SHELL
@@ -28,6 +35,7 @@ services:
       - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USER}
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_PUBLIC_URL=${KIBANA_PUBLIC_URL}
     user: 1000:1000
     networks:
       - elastic-net

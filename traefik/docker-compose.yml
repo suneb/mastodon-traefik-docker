@@ -28,7 +28,7 @@ services:
       - "traefik.http.middlewares.homeonly.ipwhitelist.sourcerange=${TRAEFIK_IP_WHITELIST}"
       - "traefik.http.routers.traefik.middlewares=dashboardauth,homeonly@docker"
       # Dashboard Auth
-      - "traefik.http.middlewares.dashboardauth.basicauth.users=admin:${TRAEFIK_ADMIN_PASSWORD}"
+      - "traefik.http.middlewares.dashboardauth.basicauth.users=${TRAEFIK_ADMIN_PASSWORD}"
       # HTTPS redirect
       - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
