@@ -5,6 +5,8 @@ Notes on setting up a Mastodon instance on an Ubuntu server using Docker Compose
 * Traefik for https and LetsEncrypt for automatic certificates
 * Optional ElasticSearch for search
 
+Disclaimer: Might've missed a few details here and there, let me know, if you're having problems.
+
 ## Prerequisites
 * Min. 2 vCPUs, 4 GB ram (8 GB with ElasticSearch), 20 GB storage
 * Ubuntu 22 LTS w. Docker [see https://docs.docker.com/engine/install/ubuntu/]
